@@ -7,28 +7,24 @@ import "hardhat/console.sol";
 contract GasOutsource {
     mapping(address => mapping(address => uint256)) public funds;
 
-    modifier onlyOrigin() {
-        require(tx.origin == msg.sender, "Not allowed");
-        _;
-    }
+    constructor() {}
 
-    constructor() payable {}
-
-    function deposit(address _to) external payable onlyOrigin {
+    function deposit(address _to) external payable {
+        require(msg.value > 0, "Not enough to deposit");
         funds[msg.sender][_to] += msg.value;
     }
 
-    function withdraw(address _from) external onlyOrigin {
+    function withdraw(address _from) external {
         uint256 amount = funds[msg.sender][_from];
         require(amount > 0, "Not enough to withdraw");
         funds[msg.sender][_from] = 0;
         payable(msg.sender).transfer(amount);
     }
 
-    function consume(address _from, uint256 _amount) external onlyOrigin {
-        uint256 amount = funds[_from][msg.sender];
+    function consume(address _from, uint256 _amount) external {
+        uint256 amount = funds[_from][tx.origin];
         require(amount >= _amount, "Not enough to consume");
-        funds[_from][msg.sender] -= _amount;
-        payable(msg.sender).transfer(_amount);
+        funds[_from][tx.origin] -= _amount;
+        payable(tx.origin).transfer(_amount);
     }
 }
