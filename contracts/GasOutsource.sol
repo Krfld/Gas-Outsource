@@ -10,6 +10,7 @@ contract GasOutsource {
     constructor() {}
 
     function deposit(address _to) external payable {
+        require(_to != msg.sender, "Can't deposit to the same address");
         require(msg.value > 0, "Not enough to deposit");
         funds[msg.sender][_to] += msg.value;
     }
@@ -25,6 +26,7 @@ contract GasOutsource {
         uint256 amount = funds[_from][tx.origin];
         require(amount >= _amount, "Not enough to consume");
         funds[_from][tx.origin] -= _amount;
+        console.log(gasleft());
         payable(tx.origin).transfer(_amount);
     }
 }
