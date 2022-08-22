@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-// Import this file to use console.log
 import "hardhat/console.sol";
 
 contract GasOutsource {
@@ -23,20 +22,8 @@ contract GasOutsource {
     }
 
     function consume(address _from, uint256 _amount) external {
-        uint256 amount = funds[_from][tx.origin];
-        require(amount >= _amount, "Not enough to consume");
+        require(_amount <= funds[_from][tx.origin], "Not enough to consume");
         funds[_from][tx.origin] -= _amount;
-
-        uint256 before = gasleft();
-
-        payable(tx.origin).transfer(_amount);
-
-        uint256 end = gasleft();
-
-        console.log("Transfer cost", before + end);
-
-        console.log("End", end);
-        console.log("Price", tx.gasprice);
-        console.log("Paid", tx.gasprice * (_amount - end));
+        payable(tx.origin).transfer(_amount * tx.gasprice);
     }
 }

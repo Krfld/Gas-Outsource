@@ -30,7 +30,8 @@ describe("GasOutsource", () => {
 
 				receipt = await anyContract.deployTransaction.wait()
 
-				console.log('Paid', ethers.utils.formatEther(paid(receipt)), 'eth')
+				console.log('Paid', ethers.utils.formatEther(paid(receipt)))
+				console.log('Balance', ethers.utils.formatEther(await seller.getBalance()))
 			})
 		})
 	});
