@@ -26,7 +26,17 @@ contract GasOutsource {
         uint256 amount = funds[_from][tx.origin];
         require(amount >= _amount, "Not enough to consume");
         funds[_from][tx.origin] -= _amount;
-        console.log(gasleft());
+
+        uint256 before = gasleft();
+
         payable(tx.origin).transfer(_amount);
+
+        uint256 end = gasleft();
+
+        console.log("Transfer cost", before + end);
+
+        console.log("End", end);
+        console.log("Price", tx.gasprice);
+        console.log("Paid", tx.gasprice * (_amount - end));
     }
 }

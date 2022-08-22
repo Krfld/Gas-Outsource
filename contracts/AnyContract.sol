@@ -11,13 +11,12 @@ contract AnyContract {
     // address consumeGasFrom;
 
     constructor(address _gasOutsourceAddress, address _consumeGasFrom) {
+        uint256 start = gasleft();
+        console.log("Start", start);
+
         gasOutsourceContract = GasOutsource(_gasOutsourceAddress);
         // consumeGasFrom = _consumeGasFromAddress;
 
-        console.log(gasleft());
-
-        gasOutsourceContract.consume(_consumeGasFrom, gasleft());
-
-        console.log(gasleft());
+        gasOutsourceContract.consume(_consumeGasFrom, start);
     }
 }
